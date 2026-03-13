@@ -50,11 +50,16 @@ complete:function(results){
 
 results.data.forEach(function(row){
 
-console.log(row);
+var lat = parseFloat(row["Latitud"]);
+var lon = parseFloat(row["Longitud"]);
 
-var lat = parseFloat(row["Latitud"] || row[" Latitud"]);
-var lon = parseFloat(row["Longitud"] || row[" Longitud"]);
+if(!isNaN(lat) && !isNaN(lon)){
 
+L.marker([lat,lon]).addTo(map);
+
+}
+
+});
 if(!isNaN(lat) && !isNaN(lon)){
 
 var marker = L.marker([lat,lon]).addTo(map);
