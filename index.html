@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Mapa de Problemas de Agua</title>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
+<style>
+
+body{
+margin:0;
+font-family: Arial, sans-serif;
+}
+
+#map{
+height:100vh;
+width:100%;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<script>
+
+var map = L.map('map').setView([21.8853,-102.2916],12);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+maxZoom:19
+}).addTo(map);
+
+var sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRUlt5lfU4B_aTfev0aUKRZokE7E5ROG8eoU3BEdXuhoMXorO3x1XO-Ht9QypGVCufHCcTtfOQAfWFz/pub?output=csv";
+
+Papa.parse(sheetURL,{
+download:true,
+header:true,
+
+complete:function(results){
+
+results.data.forEach(function(row){
+
+console.log(row);
+
+var lat = parseFloat(row["Latitud"] || row[" Latitud"]);
+var lon = parseFloat(row["Longitud"] || row[" Longitud"]);
+
+if(!isNaN(lat) && !isNaN(lon)){
+
+var marker = L.marker([lat,lon]).addTo(map);
+
+marker.bindPopup(
+"<b>"+row["Nombre (Primer nombre y Apellido)"]+"</b><br><br>"+
+"<b>Problema:</b><br>"+row["Describe el problema del suministro de agua a tu hogar, escuela, negocio u otro inmueble:"]+
+"<br><br><b>Dirección:</b><br>"+row["Direccion (nombre de la calle, numero, colonia, codigo postal y municipio):"]+
+"<br><br><b>Teléfono:</b> "+row["Numero de Telefono"]
+);
+
+}
+
+});
+
+}
+
+});
+
+setInterval(function(){
+location.reload();
+},60000);
+
+</script>
+
+</body>
+
+</html>
